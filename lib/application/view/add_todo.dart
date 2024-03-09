@@ -2,17 +2,8 @@
 
 import 'package:flutter/material.dart';
 
-class AddTodo extends StatefulWidget {
+class AddTodo extends StatelessWidget {
   const AddTodo({super.key});
-
-  @override
-  State<AddTodo> createState() => _AddTodoState();
-}
-
-TextEditingController titleController = TextEditingController();
-TextEditingController descriptionController = TextEditingController();
-
-class _AddTodoState extends State<AddTodo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,3 +51,6 @@ class _AddTodoState extends State<AddTodo> {
     );
   }
 }
+
+TextEditingController titleController = TextEditingController();
+TextEditingController descriptionController = TextEditingController();
