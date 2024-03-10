@@ -9,12 +9,12 @@ class TodoEntity extends Equatable {
   String? updateAt;
 
   TodoEntity(
-      {this.sId,
-      this.title,
-      this.description,
-      this.isCompleted,
-      this.createdAt,
-      this.updateAt});
+      {required this.sId,
+      required this.title,
+      required this.description,
+      required this.isCompleted,
+      required this.createdAt,
+      required this.updateAt});
 
   @override
   List<Object?> get props => [

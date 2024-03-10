@@ -12,8 +12,10 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     on<TodoRequestEvent>((event, emit) async {
       print('blc starts');
       try {
+        print('i am here');
         final todo = await TodoUseCases().getTodoFromDataSource();
         emit(TodoStateLoaded(todo: todo));
+        print(todo);
       } catch (e) {
         emit(TodoStateError(massage: e.toString()));
       }

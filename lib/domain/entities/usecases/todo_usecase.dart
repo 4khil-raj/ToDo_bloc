@@ -5,7 +5,9 @@ import 'package:todo_bloc/domain/repository/todo_repository.dart';
 class TodoUseCases {
   TodoRepo todoRepo = TodoRepoImpl();
   Future<List<TodoEntity>> getTodoFromDataSource() async {
+    print('njn ivite ethi');
     final todo = await todoRepo.getTodoformDataSource();
+    print(todo);
     return todo;
   }
 }
