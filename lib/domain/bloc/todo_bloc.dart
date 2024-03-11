@@ -10,12 +10,10 @@ part 'todo_state.dart';
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
   TodoBloc() : super(TodoInitial()) {
     on<TodoRequestEvent>((event, emit) async {
-      print('blc starts');
+      emit(TodoStateLoading());
       try {
-        print('i am here');
         final todo = await TodoUseCases().getTodoFromDataSource();
         emit(TodoStateLoaded(todo: todo));
-        print(todo);
       } catch (e) {
         emit(TodoStateError(massage: e.toString()));
       }

@@ -7,6 +7,7 @@ class TodoUseCases {
   Future<List<TodoEntity>> getTodoFromDataSource() async {
     print('njn ivite ethi');
     final todo = await todoRepo.getTodoformDataSource();
+    print('dsfsf');
     print(todo);
     return todo;
   }

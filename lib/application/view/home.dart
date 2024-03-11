@@ -4,26 +4,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:todo_bloc/application/view/add_todo.dart';
+import 'package:todo_bloc/data/datasource/postremortdatasource.dart';
 import 'package:todo_bloc/domain/bloc/todo_bloc.dart';
 
-class TodoWrapper extends StatelessWidget {
-  const TodoWrapper({super.key});
+import 'package:todo_bloc/domain/delete_bloc/bloc/delete_bloc.dart';
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TodoBloc(),
-      child: HomeScreen(),
-    );
-  }
-}
+// class TodoWrapper extends StatelessWidget {
+//   const TodoWrapper({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MultiBlocProvider(
+//       providers: [
+//         BlocProvider(
+//           create: (context) => TodoBloc(),
+//         ),
+//         BlocProvider(create: (context) => DeleteBloc(HomeRepo()))
+//       ],
+//       child: HomeScreen(),
+//     );
+//   }
+// }
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration(microseconds: 1), () {
+    Future.delayed(Duration(seconds: 1), () {
       BlocProvider.of<TodoBloc>(context).add(TodoRequestEvent());
     });
     return Scaffold(
@@ -34,7 +42,11 @@ class HomeScreen extends StatelessWidget {
           backgroundColor: Colors.orange,
           onPressed: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: (addtodo) => AddTodo()));
+                context,
+                MaterialPageRoute(
+                    builder: (addtodo) => AddTodo(
+                          isEdit: false,
+                        )));
           },
           icon: Icon(
             Icons.add,
@@ -50,33 +62,78 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: Colors.transparent,
-        centerTitle: true,
+        //centerTitle: true,
         title: Text(
-          'Just Do It',
-          style: TextStyle(color: Colors.orange),
+          'Notes',
+          style: TextStyle(
+              color: Colors.orange, fontWeight: FontWeight.w600, fontSize: 35),
         ),
-        leading: IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
       ),
       body: SingleChildScrollView(
         child: BlocBuilder<TodoBloc, TodoState>(builder: (context, state) {
           if (state is TodoInitial) {
             return Center(
-              child: Text('Loading......'),
+              child: CircularProgressIndicator(
+                strokeAlign: BorderSide.strokeAlignOutside,
+                color: Colors.blue,
+              ),
             );
           } else if (state is TodoStateLoading) {
             return Center(
               child: CircularProgressIndicator(
-                color: Colors.blue,
+                color: Color.fromARGB(255, 7, 230, 55),
               ),
             );
           } else if (state is TodoStateLoaded) {
-            return ListView.builder(itemBuilder: (context, index) {
-              return ListTile(
-                leading: Text('${state.todo[index].title}',
-                    style: TextStyle(color: Colors.white)),
-                subtitle: Text('${state.todo[index].description}'),
-              );
-            });
+            return SizedBox(
+              height: 1000,
+              child: ListView.builder(
+                  itemCount: state.todo.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      trailing: PopupMenuButton(
+                          iconColor: Colors.white,
+                          onSelected: (value) {
+                            if (value == 'delete') {
+                              context.read<DeleteBloc>().add(TodoDeleteEvent(
+                                  id: state.todo[index].sId.toString()));
+                              BlocProvider.of<TodoBloc>(context)
+                                  .add(TodoRequestEvent());
+                            } else if (value == 'edit') {
+                              Navigator.push(
+                                  context,
+                                  (MaterialPageRoute(
+                                      builder: (edit) => AddTodo(
+                                            model: state.todo[index],
+                                            isEdit: true,
+                                            id: state.todo[index].sId,
+                                          ))));
+                            }
+                          },
+                          itemBuilder: (context) {
+                            return [
+                              PopupMenuItem(
+                                child: Text('Delete'),
+                                value: 'delete',
+                              ),
+                              PopupMenuItem(
+                                child: Text('Edit'),
+                                value: 'edit',
+                              )
+                            ];
+                          }),
+                      leading: Text('${index + 1}',
+                          style: TextStyle(color: Colors.white, fontSize: 15)),
+                      title: Text(
+                        '${state.todo[index].title}',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      subtitle: Text('${state.todo[index].description}',
+                          style: TextStyle(
+                              color: const Color.fromARGB(255, 196, 189, 189))),
+                    );
+                  }),
+            );
           } else if (state is TodoStateError) {
             return Center(
               child: Text(

@@ -16,7 +16,7 @@ class TodoModel extends TodoEntity {
             createdAt: createdAt,
             updateAt: updateAt);
 
-  factory TodoModel.fromJosn(Map<dynamic, dynamic> json) {
+  factory TodoModel.fromJosn(Map json) {
     return TodoModel(
         title: json['title'],
         sId: json['_id'],

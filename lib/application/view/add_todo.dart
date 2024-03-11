@@ -1,15 +1,39 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_bloc/application/view/home.dart';
+import 'package:todo_bloc/domain/edit_bloc/bloc/edit_bloc.dart';
+import 'package:todo_bloc/domain/entities/todo_entity.dart';
+import 'package:todo_bloc/domain/post/bloc/post_bloc.dart';
 
 class AddTodo extends StatelessWidget {
-  const AddTodo({super.key});
+  bool isEdit = false;
+  String? id;
+  TodoEntity? model;
+  AddTodo({
+    this.model,
+    this.id,
+    required this.isEdit,
+    super.key,
+  });
+
   @override
   Widget build(BuildContext context) {
+    if (isEdit) {
+      titleController.text = model!.title.toString();
+      descriptionController.text = model!.description.toString();
+    }
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Colors.transparent,
         centerTitle: true,
-        title: Text('Add Todo'),
+        title: Text(
+          isEdit ? 'Edit Todo' : 'Add Todo',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -20,34 +44,76 @@ class AddTodo extends StatelessWidget {
               height: 50,
             ),
             TextFormField(
+              style: TextStyle(color: Colors.white),
               controller: titleController,
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              decoration: InputDecoration(hintText: 'Add title'),
+              decoration: InputDecoration(
+                  hintText: 'Add title',
+                  hintStyle: TextStyle(color: Colors.white)),
             ),
             SizedBox(
               width: 10,
             ),
             TextFormField(
-              decoration: InputDecoration(hintText: 'Description'),
+              style: TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                  hintText: 'Description',
+                  hintStyle: TextStyle(color: Colors.white)),
               maxLines: 5,
               controller: descriptionController,
             ),
             SizedBox(
               height: 20,
             ),
-            Container(
-              width: 230,
-              height: 40,
-              child: Align(
-                  alignment: Alignment.center,
-                  child: Text('Submit',
-                      style: TextStyle(color: Colors.white, fontSize: 16))),
-              decoration: BoxDecoration(
-                  color: Colors.black, borderRadius: BorderRadius.circular(20)),
+            InkWell(
+              onTap: () => isEdit ? edit(context) : submit(context),
+              child: Container(
+                width: 230,
+                height: 40,
+                child: Align(
+                    alignment: Alignment.center,
+                    child: Text(isEdit ? 'Edit' : 'Submit',
+                        style: TextStyle(
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                            fontSize: 16))),
+                decoration: BoxDecoration(
+                    color: Colors.amber,
+                    borderRadius: BorderRadius.circular(20)),
+              ),
             )
           ],
         ),
       ),
+    );
+  }
+
+  void edit(BuildContext context) {
+    BlocProvider.of<EditBloc>(context).add(TodoEditEvent(
+        id: id ?? '1',
+        description: descriptionController.text,
+        title: titleController.text));
+    titleController.clear();
+    descriptionController.clear();
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomeScreen(),
+      ),
+      (route) => false,
+    );
+  }
+
+  void submit(BuildContext context) {
+    BlocProvider.of<PostBloc>(context).add(TodoPostEvent(
+        title: titleController.text, description: descriptionController.text));
+    titleController.clear();
+    descriptionController.clear();
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomeScreen(),
+      ),
+      (route) => false,
     );
   }
 }
