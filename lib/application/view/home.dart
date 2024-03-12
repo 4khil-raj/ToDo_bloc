@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:advanced_navigator/advanced_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import 'package:todo_bloc/application/view/add_todo.dart';
 import 'package:todo_bloc/data/datasource/postremortdatasource.dart';
@@ -31,7 +33,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 3), () {
       BlocProvider.of<TodoBloc>(context).add(TodoRequestEvent());
     });
     return Scaffold(
@@ -47,6 +49,17 @@ class HomeScreen extends StatelessWidget {
                     builder: (addtodo) => AddTodo(
                           isEdit: false,
                         )));
+            // MaterialApp(
+            //   builder: (context, _) => AdvancedNavigator(paths: {
+            //     '/': (_) => [
+            //           MaterialPage(
+            //               key: ValueKey('home'),
+            //               child: AddTodo(
+            //                 isEdit: false,
+            //               )),
+            //         ],
+            //   }),
+            // );
           },
           icon: Icon(
             Icons.add,
@@ -69,21 +82,27 @@ class HomeScreen extends StatelessWidget {
               color: Colors.orange, fontWeight: FontWeight.w600, fontSize: 35),
         ),
       ),
-      body: SingleChildScrollView(
+      body: Align(
+        alignment: Alignment.center,
         child: BlocBuilder<TodoBloc, TodoState>(builder: (context, state) {
           if (state is TodoInitial) {
-            return Center(
-              child: CircularProgressIndicator(
-                strokeAlign: BorderSide.strokeAlignOutside,
-                color: Colors.blue,
-              ),
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                LoadingAnimationWidget.stretchedDots(
+                    color: Colors.white, size: 40),
+                SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  '  Loading...',
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
             );
           } else if (state is TodoStateLoading) {
-            return Center(
-              child: CircularProgressIndicator(
-                color: Color.fromARGB(255, 7, 230, 55),
-              ),
-            );
+            return LoadingAnimationWidget.halfTriangleDot(
+                color: Colors.white, size: 50);
           } else if (state is TodoStateLoaded) {
             return SizedBox(
               height: 1000,
