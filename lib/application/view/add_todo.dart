@@ -77,7 +77,7 @@ class AddTodo extends StatelessWidget {
                             color: const Color.fromARGB(255, 0, 0, 0),
                             fontSize: 16))),
                 decoration: BoxDecoration(
-                    color: Colors.amber,
+                    color: Colors.orange,
                     borderRadius: BorderRadius.circular(20)),
               ),
             )
