@@ -17,13 +17,6 @@ class TodoRemoteDataSourceImpl implements TodoRemoteDatasource {
         // headers: {'content-type': 'application/json'}
       );
 
-      // if (response.statusCode == 200) {
-      //   final List responseBody = jsonDecode(response.body);
-      //   final List todofech =
-      //       responseBody.map((json) => TodoModel.fromJosn(json)).toList();
-      //   print('blabla$todofech');
-      //   return todofech;
-      // }
       if (response.statusCode == 200) {
         print("fetch success ${response.statusCode}");
         print(response.body);

@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import 'package:todo_bloc/application/view/add_todo.dart';
-import 'package:todo_bloc/data/datasource/postremortdatasource.dart';
+
 import 'package:todo_bloc/domain/bloc/todo_bloc.dart';
 
 import 'package:todo_bloc/domain/delete_bloc/bloc/delete_bloc.dart';
@@ -33,7 +33,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(Duration(microseconds: 1), () {
       BlocProvider.of<TodoBloc>(context).add(TodoRequestEvent());
     });
     return Scaffold(
@@ -92,7 +92,7 @@ class HomeScreen extends StatelessWidget {
                 LoadingAnimationWidget.stretchedDots(
                     color: Colors.white, size: 40),
                 SizedBox(
-                  height: 8,
+                  height: 10,
                 ),
                 Text(
                   '  Loading...',
@@ -101,8 +101,20 @@ class HomeScreen extends StatelessWidget {
               ],
             );
           } else if (state is TodoStateLoading) {
-            return LoadingAnimationWidget.halfTriangleDot(
-                color: Colors.white, size: 50);
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                LoadingAnimationWidget.stretchedDots(
+                    color: Colors.white, size: 40),
+                SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  '  Loading...',
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            );
           } else if (state is TodoStateLoaded) {
             return SizedBox(
               height: 1000,
